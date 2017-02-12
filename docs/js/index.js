@@ -37,7 +37,6 @@ var PM25 = "微小粒子状物質(PM2.5)";
 var WIND_D = "風向(WD)";
 var WIND_V = "風速(WV)";
 
-
 var ArrowIcon = L.Icon.extend({
     options: {
          iconSize:     [48, 48]
@@ -71,8 +70,8 @@ function initData() {
 //データをロードできたときに呼ばれる関数
 function callbackData(data) {
   console.log('callbackData');
-  var avg = 0;
-  var avgcnt = 0;
+  var sum = 0;
+  var sumcnt = 0;
   //変換したオブジェクトを表示
   for (var i=0;i<data.length;i++) {
     var val = data[i];
@@ -82,10 +81,13 @@ function callbackData(data) {
     }
     //マーカーを追加
     addMaker(val);
-    if (!isNaN())
+    if (!isNaN(val[PM25])){
+      sum += parseFloat(val[PM25]);
+      sumcnt++;
+    }
   }
   //平均値を計算
-
+  console.log("合計："+sum+" 件数："+sumcnt+" 平均："+(sum/sumcnt));
   $('#loading').hide();
 }
 
@@ -127,7 +129,7 @@ function toPic(pm,wd) {
     return 'images/arrowno.png';
   }
   var sig = 'g';  // g:GREEN　o:ORANGE r:RED
-  var no = WIND_D[wd];
+  var no = WIND_DIRECTION[wd];
   //濃度の判断
   if (!isNaN(pm)) {
     var p = parseFloat(pm);
@@ -139,7 +141,7 @@ function toPic(pm,wd) {
   }
   return 'images/arrow'+sig+no+'.png';
 }
-var WIND_D = {
+var WIND_DIRECTION = {
    '北':'00'
   ,'北北東':'01'
   ,'北東':'02'
